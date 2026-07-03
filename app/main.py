@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +9,8 @@ from app.api.jobs import router as jobs_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, Base.metadata.create_all, bind=engine)
     yield
 
 

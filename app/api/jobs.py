@@ -19,7 +19,7 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 @router.post("/upload", status_code=201, response_model=JobResponse)
 async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    if not file.filename.endswith(".csv"):
+    if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(400, "Only CSV files are allowed")
 
     content = await file.read()
@@ -101,7 +101,7 @@ def get_job_results(job_id: int, db: Session = Depends(get_db)):
 
 @router.get("", response_model=list[JobListResponse])
 def list_jobs(
-    status: str = Query(None, regex="^(pending|processing|completed|failed)?$"),
+    status: str = Query(None, pattern="^(pending|processing|completed|failed)?$"),
     db: Session = Depends(get_db),
 ):
     query = db.query(Job)

@@ -1,8 +1,6 @@
 import json
 import time
-from datetime import datetime
-
-from sqlalchemy.orm import Session as DBSession
+from datetime import datetime, timezone
 
 from app.celery_app import celery_app
 from app.database import SessionLocal
@@ -13,24 +11,27 @@ from app.services.llm_client import classify_transactions, generate_narrative_su
 
 
 def _update_job_status(job_id: int, status: str, error: str = None):
-    db: DBSession = SessionLocal()
+    db = None
     try:
+        db = SessionLocal()
         job = db.query(Job).filter(Job.id == job_id).first()
         if job:
             job.status = status
             if error:
                 job.error_message = error
             if status in ("completed", "failed"):
-                job.completed_at = datetime.utcnow()
+                job.completed_at = datetime.now(timezone.utc)
             db.commit()
     finally:
-        db.close()
+        if db is not None:
+            db.close()
 
 
 @celery_app.task(bind=True, max_retries=3)
 def process_csv(self, job_id: int, csv_content: str):
-    db: DBSession = SessionLocal()
+    db = None
     try:
+        db = SessionLocal()
         _update_job_status(job_id, "processing")
 
         raw_rows = parse_csv(csv_content)
@@ -51,7 +52,7 @@ def process_csv(self, job_id: int, csv_content: str):
                 try:
                     classify_transactions(uncategorised)
                     break
-                except Exception as e:
+                except Exception:
                     if attempt < 2:
                         time.sleep(2 ** attempt)
                     else:
@@ -99,7 +100,7 @@ def process_csv(self, job_id: int, csv_content: str):
                     transactions_count=len(cleaned),
                 )
                 break
-            except Exception as e:
+            except Exception:
                 if attempt < 2:
                     time.sleep(2 ** attempt)
                 else:
@@ -126,8 +127,10 @@ def process_csv(self, job_id: int, csv_content: str):
         _update_job_status(job_id, "completed")
 
     except Exception as e:
-        db.rollback()
+        if db is not None:
+            db.rollback()
         _update_job_status(job_id, "failed", str(e))
         raise
     finally:
-        db.close()
+        if db is not None:
+            db.close()

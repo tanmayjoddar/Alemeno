@@ -11,6 +11,8 @@ CATEGORIES = [
 
 
 def _get_client():
+    if not settings.gemini_api_key:
+        raise RuntimeError("GEMINI_API_KEY is not configured")
     return genai.Client(api_key=settings.gemini_api_key)
 
 
