@@ -54,7 +54,7 @@ def process_csv(self, job_id: int, csv_content: str):
                     break
                 except Exception:
                     if attempt < 2:
-                        time.sleep(2 ** attempt)
+                        time.sleep(5 * (attempt + 1))
                     else:
                         for t in uncategorised:
                             t["llm_failed"] = True
@@ -102,7 +102,7 @@ def process_csv(self, job_id: int, csv_content: str):
                 break
             except Exception:
                 if attempt < 2:
-                    time.sleep(2 ** attempt)
+                    time.sleep(5 * (attempt + 1))
                 else:
                     narrative_data = {
                         "narrative": "LLM narrative generation failed after retries.",
