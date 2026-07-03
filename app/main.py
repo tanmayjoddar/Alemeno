@@ -10,7 +10,7 @@ from app.api.jobs import router as jobs_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, Base.metadata.create_all, bind=engine)
+    await loop.run_in_executor(None, lambda: Base.metadata.create_all(bind=engine))
     yield
 
 
