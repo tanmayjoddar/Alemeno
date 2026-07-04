@@ -3,6 +3,7 @@
 A backend API that processes CSV transaction files asynchronously through a job queue, uses an LLM to classify transactions and flag anomalies, and generates a structured summary report.
 
 📹 **Technical Video:** https://www.loom.com/share/75737fa6349848d8baa98a638ea87a89
+
 📐 **Architecture Diagram:** https://drive.google.com/file/d/10piNkbhakEZseL3iZsR-qwvu3vC3ADRU/view
 
 ## Tech Stack
