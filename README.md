@@ -84,6 +84,10 @@ curl http://localhost:8000/health
 └── requirements.txt
 ```
 
+## Technical Video
+
+Watch the 3-minute architecture walkthrough: [Loom Video](https://www.loom.com/share/75737fa6349848d8baa98a638ea87a89)
+
 ## Processing Pipeline
 
 1. **Upload** → CSV validated, Job created (status=pending), task enqueued
