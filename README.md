@@ -2,6 +2,8 @@
 
 A backend API that processes CSV transaction files asynchronously through a job queue, uses an LLM to classify transactions and flag anomalies, and generates a structured summary report.
 
+📹 **Technical Video:** https://www.loom.com/share/75737fa6349848d8baa98a638ea87a89
+
 ## Tech Stack
 
 - **API**: FastAPI
@@ -83,10 +85,6 @@ curl http://localhost:8000/health
 ├── Dockerfile.celery
 └── requirements.txt
 ```
-
-## Technical Video
-
-Watch the 3-minute architecture walkthrough: [Loom Video](https://www.loom.com/share/75737fa6349848d8baa98a638ea87a89)
 
 ## Processing Pipeline
 
